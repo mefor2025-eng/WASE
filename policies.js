@@ -1,10 +1,26 @@
-function togglePolicy(header) {
-  const content = header.nextElementSibling;
-  const isOpen = content.style.display === "block";
+/*
+  WASE Policies Script
+  Collapsible sections (one open at a time)
+*/
 
-  document.querySelectorAll(".policy-content").forEach(p => {
-    p.style.display = "none";
+document.addEventListener("DOMContentLoaded", () => {
+  const headers = document.querySelectorAll(".policy h2");
+
+  headers.forEach(header => {
+    header.addEventListener("click", () => togglePolicy(header));
+  });
+});
+
+function togglePolicy(activeHeader) {
+  const allContents = document.querySelectorAll(".policy-content");
+
+  allContents.forEach(content => {
+    if (content !== activeHeader.nextElementSibling) {
+      content.style.display = "none";
+    }
   });
 
-  content.style.display = isOpen ? "none" : "block";
+  const current = activeHeader.nextElementSibling;
+  current.style.display = current.style.display === "block" ? "none" : "block";
 }
+
