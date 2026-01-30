@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - WASE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="page-login">
+    <header class="header"></header>
+
+    <div class="container flex items-center justify-between"
+        style="min-height:80vh; max-width:400px; margin: 0 auto; flex-direction:column; padding-top:40px;">
+        <div style="width:100%;">
+            <h1 class="text-center" style="margin-bottom:8px;">Welcome Back</h1>
+            <p class="text-center text-sm" style="margin-bottom:32px;">Login to manage orders and checkout faster.</p>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" name="phone" class="form-input" required placeholder="Enter phone number">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-input" required placeholder="Enter password">
+                </div>
+
+                <button type="submit" class="btn" style="width:100%; margin-top:16px;">Login</button>
+            </form>
+
+            <div class="text-center" style="margin-top:24px;">
+                <p class="text-sm">Don't have an account? <a href="signup.html" style="text-decoration:underline;">Sign
+                        Up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = "Logging in...";
+            btn.disabled = true;
+
+            const phone = e.target.phone.value;
+            const password = e.target.password.value;
+
+            const res = await API.login(phone, password);
+
+            if (res.status === "success") {
+                localStorage.setItem('wase_user', JSON.stringify(res.user));
+                showToast("Login Successful");
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } else {
+                showToast(res.message);
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

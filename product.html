@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - WASE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="page-product">
+    <header class="header"></header>
+
+    <div class="container" style="padding-top:20px;">
+        <div id="product-detail" class="flex flex-col gap-md" style="min-height:400px;">
+            <div style="padding:40px; text-align:center; color:#999;">Loading details...</div>
+        </div>
+
+        <!-- Suggestions -->
+        <h2 class="section-title">You might also like</h2>
+        <div id="suggestions-grid" class="product-grid"></div>
+    </div>
+
+    <div class="mobile-nav"></div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get('id');
+            const products = await API.getProducts();
+
+            // Normalize IDs for comparison (handle numbers vs strings, whitespace)
+            const product = products.find(p => String(p.id).trim() === String(productId).trim());
+            const detailEl = document.getElementById('product-detail');
+
+            if (!product) {
+                detailEl.innerHTML = '<div style="text-align:center; padding:40px;">Product not found</div>';
+                return;
+            }
+
+            // Store globally for helpers
+            window.currentProduct = product;
+
+            // Render Product
+            detailEl.innerHTML = `
+                <div class="product-layout" style="display:grid; grid-template-columns: 1fr; gap:32px;">
+                    <!-- Images -->
+                    <div>
+                        <div class="main-image" style="aspect-ratio:1; background:#f5f5f5; border-radius:8px; overflow:hidden; margin-bottom:12px;">
+                            <img id="main-img" src="${product.images[0]}" alt="${product.name}" style="width:100%; height:100%; object-fit:contain;">
+                        </div>
+                        <div class="thumbnails flex gap-sm" style="overflow-x:auto;">
+                            ${product.images.map(img => `
+                                <div onclick="document.getElementById('main-img').src='${img}'" style="min-width:60px; height:60px; border:1px solid #eee; border-radius:4px; overflow:hidden; cursor:pointer;">
+                                    <img src="${img}" style="width:100%; height:100%;">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div>
+                        <div style="margin-bottom:24px;">
+                            <h1 style="font-size:1.5rem; font-weight:700; margin-bottom:8px;">${product.name}</h1>
+                            <p style="font-size:1.25rem; font-weight:600;">${formatPrice(product.price)}</p>
+                            <p class="text-sm" style="margin-top:4px;">${product.category}</p>
+                        </div>
+
+                        <div style="margin-bottom:32px; color:#444; line-height:1.6;">
+                            ${product.description}
+                        </div>
+
+                        <div class="flex gap-md">
+                            <button onclick="addToCartAndStay()" class="btn btn-secondary" style="flex:1;">Add to Cart</button>
+                            <button onclick="buyNow()" class="btn" style="flex:1;">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Layout fix for desktop
+            if (window.innerWidth >= 768) {
+                detailEl.querySelector('.product-layout').style.gridTemplateColumns = '1fr 1fr';
+            }
+
+            // Suggestions (Random 4)
+            const suggestions = products.filter(p => p.id !== productId).sort(() => 0.5 - Math.random()).slice(0, 4);
+            document.getElementById('suggestions-grid').innerHTML = suggestions.map(p => `
+                <div class="product-card" onclick="window.location.href='product.html?id=${p.id}'">
+                    <div class="product-image">
+                        <img src="${p.images[0]}" alt="${p.name}">
+                    </div>
+                    <div style="padding:8px 0;">
+                        <h3 style="font-size:0.9rem; font-weight:500;">${p.name}</h3>
+                        <p style="font-weight:600;">${formatPrice(p.price)}</p>
+                    </div>
+                </div>
+            `).join('');
+        });
+
+        // Helpers wrapper
+        function addToCartAndStay() {
+            if (window.currentProduct) {
+                addToCart(window.currentProduct);
+            } else {
+                showToast("Error: Product not loaded");
+            }
+        }
+
+        function buyNow() {
+            if (window.currentProduct) {
+                addToCart(window.currentProduct);
+                window.location.href = 'cart.html';
+            } else {
+                showToast("Error: Product not loaded");
+            }
+        }
+    </script>
+</body>
+
+</html>

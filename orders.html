@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - WASE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="page-orders">
+    <header class="header"></header>
+
+    <div class="flex justify-between items-center" style="margin-bottom:20px;">
+        <h1 class="section-title" style="margin:0;">My Orders</h1>
+        <button onclick="logout()" class="btn btn-outline"
+            style="padding:8px 16px; font-size:0.9rem; border-color:#ff4d4f; color:#ff4d4f;">Logout</button>
+    </div>
+
+    <div id="orders-list" class="flex flex-col gap-md">
+        <p class="text-center" style="padding:40px; color:#999;">Loading orders...</p>
+    </div>
+    </div>
+
+    <div class="mobile-nav"></div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!state.user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const container = document.getElementById('orders-list');
+
+            // Mock Orders for Demo
+            let orders = [];
+            if (CONFIG.USE_MOCK) {
+                orders = [
+                    {
+                        id: 'ORD-123456',
+                        date: '2024-01-15',
+                        total: 2499,
+                        status: 'Delivered',
+                        items: [{ name: 'Minimalist Black Watch', qty: 1 }]
+                    }
+                ];
+            } else {
+                // Fetch from API (To be implemented in backend.gs fully if needed, currently not exposed in API helper)
+                // For now, we'll just show the mock or empty
+                orders = [];
+            }
+
+            if (orders.length === 0) {
+                container.innerHTML = '<p class="text-center" style="padding:40px; color:#999;">No orders found.</p>';
+            } else {
+                container.innerHTML = orders.map(order => `
+                    <div style="border:1px solid #eee; border-radius:8px; padding:16px;">
+                        <div class="flex justify-between items-center" style="margin-bottom:12px; border-bottom:1px solid #f5f5f5; padding-bottom:8px;">
+                            <span class="text-bold text-sm text-gray">${order.id}</span>
+                            <span style="font-size:0.8rem; background:#eee; padding:2px 8px; border-radius:4px;">${order.status}</span>
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            ${order.items.map(item => `
+                                <p style="font-size:0.9rem;">${item.name} x${item.qty}</p>
+                            `).join('')}
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span style="color:#666;">${order.date}</span>
+                            <span class="text-bold">${formatPrice(order.total)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        });
+    </script>
+</body>
+
+</html>

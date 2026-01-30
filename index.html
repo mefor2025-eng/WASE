@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WASE - Minimal Premium Store</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="page-home">
+    <header class="header"></header>
+
+    <!-- Hero Banner -->
+    <div class="banner-container container" style="margin-top:20px; border-radius:8px; overflow:hidden;">
+        <div class="banner" style="position:relative; height:300px; background:#f5f5f5;">
+            <!-- Placeholder for slider -->
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1200"
+                alt="New Collection" style="width:100%; height:100%; object-fit:cover;">
+            <div style="position:absolute; bottom:20px; left:20px; color:white; text-shadow:0 2px 4px rgba(0,0,0,0.5);">
+                <h2 style="font-size:2rem; font-weight:700;">New Arrivals</h2>
+                <p>Minimalist collection 2024</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Products -->
+    <div class="container">
+        <h2 class="section-title">Featured Products</h2>
+        <!-- Horizontal Scroll on Mobile, Grid on Desktop -->
+        <div id="featured-grid" class="product-grid">
+            <!-- Products injected via JS -->
+            <div style="padding:40px; text-align:center; color:#999; grid-column:1/-1;">Loading products...</div>
+        </div>
+
+        <div class="text-center" style="margin: 40px 0;">
+            <a href="products.html" class="btn btn-outline" style="width:auto;">View All Products</a>
+        </div>
+    </div>
+
+    <div class="mobile-nav"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Home-specific Logic
+        document.addEventListener('DOMContentLoaded', async () => {
+            const products = await API.getProducts();
+            const featuredEl = document.getElementById('featured-grid');
+
+            if (products.length > 0) {
+                featuredEl.innerHTML = products.slice(0, 4).map(p => `
+                    <div class="product-card" onclick="window.location.href='product.html?id=${p.id}'">
+                        <div class="product-image">
+                            <button class="wishlist-btn" onclick="event.stopPropagation(); showToast('Added to Wishlist')">
+                                <i class="ph ph-heart"></i>
+                            </button>
+                            <img src="${p.images[0]}" alt="${p.name}">
+                        </div>
+                        <div style="padding:8px 0;">
+                            <h3 style="font-size:1rem; font-weight:500; margin-bottom:4px;">${p.name}</h3>
+                            <p style="font-weight:600;">${formatPrice(p.price)}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                featuredEl.innerHTML = '<p class="text-center">No products found.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

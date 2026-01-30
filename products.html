@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - WASE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="page-products">
+    <header class="header"></header>
+
+    <div class="container" style="padding-top:20px;">
+        <div class="form-group" style="position:relative;">
+            <input type="text" id="search-input" class="form-input" placeholder="Search products..."
+                style="padding-left:40px;">
+            <i class="ph ph-magnifying-glass"
+                style="position:absolute; left:12px; top:12px; font-size:1.2rem; color:#999;"></i>
+        </div>
+
+        <div id="products-grid" class="product-grid" style="min-height:300px;">
+            <div style="padding:40px; text-align:center; color:#999; grid-column:1/-1;">Loading products...</div>
+        </div>
+    </div>
+
+    <div class="mobile-nav"></div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const products = await API.getProducts();
+            const gridEl = document.getElementById('products-grid');
+            const searchInput = document.getElementById('search-input');
+
+            function render(list) {
+                if (list.length === 0) {
+                    gridEl.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">No products found</div>';
+                    return;
+                }
+                gridEl.innerHTML = list.map(p => `
+                    <div class="product-card" onclick="window.location.href='product.html?id=${p.id}'">
+                        <div class="product-image">
+                            <button class="wishlist-btn" onclick="event.stopPropagation(); showToast('Added to Wishlist')">
+                                <i class="ph ph-heart"></i>
+                            </button>
+                            <img src="${p.images[0]}" alt="${p.name}">
+                        </div>
+                        <div style="padding:8px 0;">
+                            <h3 style="font-size:1rem; font-weight:500; margin-bottom:4px;">${p.name}</h3>
+                            <p style="font-weight:600;">${formatPrice(p.price)}</p>
+                            <p class="text-sm">${p.category}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            render(products);
+
+            // Live Search
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = products.filter(p =>
+                    p.name.toLowerCase().includes(term) ||
+                    p.category.toLowerCase().includes(term)
+                );
+                render(filtered);
+            });
+        });
+    </script>
+</body>
+
+</html>

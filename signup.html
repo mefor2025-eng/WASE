@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - WASE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="page-signup">
+    <header class="header"></header>
+
+    <div class="container flex items-center justify-between"
+        style="min-height:80vh; max-width:400px; margin: 0 auto; flex-direction:column; padding-top:40px;">
+        <div style="width:100%;">
+            <h1 class="text-center" style="margin-bottom:8px;">Create Account</h1>
+            <p class="text-center text-sm" style="margin-bottom:32px;">Join WASE for exclusive offers.</p>
+
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" name="phone" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input type="text" name="address" class="form-input" required>
+                </div>
+                <div class="flex gap-md">
+                    <div class="form-group" style="flex:1;">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-input" required>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label class="form-label">Pincode</label>
+                        <input type="number" name="pincode" class="form-input" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" style="width:100%; margin-top:16px;">Sign Up</button>
+            </form>
+
+            <div class="text-center" style="margin-top:24px;">
+                <p class="text-sm">Already have an account? <a href="login.html"
+                        style="text-decoration:underline;">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        async function handleSignup(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = "Creating Account...";
+            btn.disabled = true;
+
+            const userData = {
+                name: e.target.name.value,
+                phone: e.target.phone.value,
+                password: e.target.password.value,
+                address: e.target.address.value,
+                city: e.target.city.value,
+                pincode: e.target.pincode.value
+            };
+
+            const res = await API.signup(userData);
+
+            if (res.status === "success") {
+                localStorage.setItem('wase_user', JSON.stringify(res.user));
+                showToast("Account Created");
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } else {
+                showToast(res.message);
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
