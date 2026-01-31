@@ -20,6 +20,10 @@ function doGet(e) {
 }
 
 function doPost(e) {
+  if (!e.postData || !e.postData.contents) {
+    return responseJSON({ status: "error", message: "No data received" });
+  }
+
   let data;
   try {
     data = JSON.parse(e.postData.contents);
