@@ -98,7 +98,7 @@ const API = {
         if (CONFIG.USE_MOCK) {
             // Mock Login
             if (phone === "9999999999" && password === "1234") {
-                return { status: "success", user: { name: "Demo User", phone, address: "123 Street", city: "Mumbai", pincode: "400001" } };
+                return { status: "success", user: { name: "Demo User", phone, address: "123 Street", city: "kerala", pincode: "673502" } };
             }
             return { status: "error", message: "Invalid credentials (Mock: 9999999999/1234)" };
         }
