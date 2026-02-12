@@ -187,7 +187,7 @@ function updateCartCount() {
 function renderHeader() {
     return `
     <div class="container flex justify-between items-center" style="height: 100%;">
-        <a href="index.html" class="logo">WASE.</a>
+        <a href="index.html" class="logo">WASEM&emsp;</a> 
         <div class="flex items-center gap-md">
             <a href="products.html" class="hidden-mobile"><i class="ph ph-magnifying-glass" style="font-size:1.5rem"></i></a>
             <a href="cart.html" style="position:relative">
